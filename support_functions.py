@@ -214,3 +214,16 @@ def determine_move(tree, current_id, is_max):
         return moves[random.choice(np.where(raw_scores == max(raw_scores))[0])]
     else:
         return moves[random.choice(np.where(raw_scores == min(raw_scores))[0])] 
+    
+def precompute_tree_moves(tree):
+    all_states = []
+    for length in range(1,9):
+        tree_states = [''.join(state) for state in list(itertools.permutations(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'], r=length))]
+        all_states.extend(tree_states)
+
+    for state in tqdm(all_states):
+        try:
+            move = determine_move(tree, state, False) 
+        except:
+            pass 
+    return None

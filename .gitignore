@@ -1,2 +1,4 @@
 .ipynb_checkpoints
 plots
+*pkl
+__pycache__

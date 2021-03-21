@@ -7,7 +7,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 print('Loading tree...')
-with open('tree_tctoe_3x3.pkl', 'rb') as f:
+with open('tree_tactoe_3x3.pkl', 'rb') as f:
     tree = dill.load(f)
 
 print('Precomputing best moves...')
@@ -23,15 +23,14 @@ for state in tqdm(all_states):
         pass 
 
 tictactoe = Tictoe(3)
-player_tree = Player_vs_tree(1,
-                            tree, 
-                            alpha = 0.01,
-                            gamma = 0.8,
-                            epsilon = 0.1)
+player_tree = Player(1,
+                    tree, 
+                    alpha = 0.01,
+                    gamma = 0.8,
+                    epsilon = 0.1)
 
 print('Starting the training loop...')
 no_episodes = int(sys.argv[1])
-rewards = np.zeros(no_episodes)
 frame_counter = 0
 plots = {}
 for ep_idx in tqdm(range(no_episodes)):
@@ -39,15 +38,14 @@ for ep_idx in tqdm(range(no_episodes)):
         tictactoe = player_tree.make_move(tictactoe)
         tictactoe = player_tree.make_computer_move(tictactoe)
         player_tree.update_qtable()
-        
-    rewards[ep_idx] = tictactoe.get_reward(1)
+    tictactoe.reset_board()
     
     # Specifically meant for plotting the frames in the YT movie
-    if ep_idx % 2000 == 0:
+    if ep_idx < 200 or ep_idx % 400 == 0:
         #ggsave(player_tree.plot_qtable(), filename='plots/qtable_ep%06d.png' % frame_counter)
-        plots[frame_counter] = player_tree.plot_qtable()
+        plots[frame_counter] = player_tree.plot_qtable() + ggtitle('Episode %d' % ep_idx)
         frame_counter += 1
-    tictactoe.reset_board()
+
 print('Training finished...')
 print('Generating frames...')
 from tqdm.contrib.concurrent import process_map  # or thread_map
